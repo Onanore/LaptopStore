@@ -53,7 +53,7 @@ router.delete('/:id', auth, async (req, res) => {
     if (!order) return res.status(404).json({ message: 'Order not found' });
     if (order.status !== 'pending')
       return res.status(403).json({ message: 'Cannot delete order once processed' });
-    await order.remove();
+    await order.deleteOne({_id: req.params.id});
     res.json({ message: 'Order deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
