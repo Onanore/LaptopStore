@@ -67,15 +67,7 @@ project/
    npm install
    ```
 
-3. **Configure Environment Variables:**
-   Create a `.env` file in the root directory and add:
-   ```env
-   PORT=3000
-   JWT_SECRET=yourSecretKey
-   ```
-   > **Note:** Replace `yourSecretKey` with a strong secret key for signing JWT tokens.
-
-4. **Run the application:**
+3. **Run the application:**
    ```bash
    npm start
    ```
