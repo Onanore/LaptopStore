@@ -42,6 +42,9 @@ project/
 │      ├─orders.js
 │      └─users.js
 │
+├───public/
+│      └─index.html
+│
 └───middleware/
        └─auth.js
 ```
@@ -55,7 +58,7 @@ project/
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Onanore/LaptopStore
    cd laptop-store
    ```
 
@@ -68,7 +71,6 @@ project/
    Create a `.env` file in the root directory and add:
    ```env
    PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/laptopstore
    JWT_SECRET=yourSecretKey
    ```
    > **Note:** Replace `yourSecretKey` with a strong secret key for signing JWT tokens.
