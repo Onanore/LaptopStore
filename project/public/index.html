@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Laptop Store - Dashboard</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Laptop Store</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto" id="navTabs">
+        <li class="nav-item active">
+          <a class="nav-link" href="#" data-section="home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-section="laptops">Laptops</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-section="orders">My Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-section="profile">Profile</a>
+        </li>
+        <li class="nav-item" id="adminTab" style="display: none;">
+          <a class="nav-link" href="#" data-section="manageLaptops">Manage Laptops</a>
+        </li>
+      </ul>
+      <button id="logoutBtn" class="btn btn-outline-danger my-2 my-sm-0" style="display: none;">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container mt-4">
+    <!-- Home Section -->
+    <div id="homeSection">
+      <h2>Welcome to the Laptop Store</h2>
+      <p>Please login or register to access our services.</p>
+      <button class="btn btn-primary" data-toggle="modal" data-target="#authModal">Login / Register</button>
+    </div>
+
+    <!-- Laptops Section (public view) -->
+    <div id="laptopsSection" style="display: none;">
+      <h2>Available Laptops</h2>
+      <div id="laptopList"></div>
+    </div>
+
+    <!-- Manage Laptops Section (admin only) -->
+    <div id="manageLaptopsSection" style="display: none;">
+      <h2>Manage Laptops</h2>
+      <button id="addLaptopBtn" class="btn btn-success mb-3">Add New Laptop</button>
+      <div id="adminLaptopList"></div>
+    </div>
+
+    <!-- Orders Section -->
+    <div id="ordersSection" style="display: none;">
+      <h2>My Orders</h2>
+      <button id="newOrderBtn" class="btn btn-success mb-3">Place New Order</button>
+      <div id="orderList"></div>
+    </div>
+
+    <!-- Profile Section -->
+    <div id="profileSection" style="display: none;">
+      <h2>My Profile</h2>
+      <div id="profileInfo"></div>
+      <button id="editProfileBtn" class="btn btn-primary mt-3">Edit Profile</button>
+      <div id="editProfileForm" style="display: none;" class="mt-3">
+        <h4>Edit Profile</h4>
+        <form id="profileUpdateForm">
+          <div class="form-group">
+            <label for="profileUsername">Username</label>
+            <input type="text" class="form-control" id="profileUsername" required>
+          </div>
+          <div class="form-group">
+            <label for="profileEmail">Email</label>
+            <input type="email" class="form-control" id="profileEmail" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Update Profile</button>
+          <button type="button" id="cancelProfileEdit" class="btn btn-secondary">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authentication Modal (Login/Register) -->
+  <div class="modal fade" id="authModal" tabindex="-1" role="dialog" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="authModalLabel">Authentication</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Auth Tabs -->
+          <ul class="nav nav-tabs" id="authTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="login-tab" data-toggle="tab" href="#loginPane" role="tab" aria-controls="loginPane" aria-selected="true">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="register-tab" data-toggle="tab" href="#registerPane" role="tab" aria-controls="registerPane" aria-selected="false">Register</a>
+            </li>
+          </ul>
+          <div class="tab-content mt-3">
+            <!-- Login Form -->
+            <div class="tab-pane fade show active" id="loginPane" role="tabpanel" aria-labelledby="login-tab">
+              <form id="loginForm">
+                <div class="form-group">
+                  <label for="loginEmail">Email</label>
+                  <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                  <label for="loginPassword">Password</label>
+                  <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+              </form>
+            </div>
+            <!-- Registration Form -->
+            <div class="tab-pane fade" id="registerPane" role="tabpanel" aria-labelledby="register-tab">
+              <form id="registerForm">
+                <div class="form-group">
+                  <label for="registerUsername">Username</label>
+                  <input type="text" class="form-control" id="registerUsername" required>
+                </div>
+                <div class="form-group">
+                  <label for="registerEmail">Email</label>
+                  <input type="email" class="form-control" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                  <label for="registerPassword">Password</label>
+                  <input type="password" class="form-control" id="registerPassword" required>
+                </div>
+                <button type="submit" class="btn btn-success">Register</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Laptop Modal for Adding/Editing (Admin Only) -->
+  <div class="modal fade" id="laptopModal" tabindex="-1" role="dialog" aria-labelledby="laptopModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="laptopModalLabel">Laptop Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="laptopForm">
+          <div class="modal-body">
+            <input type="hidden" id="laptopId">
+            <div class="form-group">
+              <label for="laptopBrand">Brand</label>
+              <input type="text" class="form-control" id="laptopBrand" required>
+            </div>
+            <div class="form-group">
+              <label for="laptopModel">Model</label>
+              <input type="text" class="form-control" id="laptopModel" required>
+            </div>
+            <div class="form-group">
+              <label for="laptopPrice">Price</label>
+              <input type="number" class="form-control" id="laptopPrice" required>
+            </div>
+            <div class="form-group">
+              <label for="laptopProcessor">Processor</label>
+              <input type="text" class="form-control" id="laptopProcessor">
+            </div>
+            <div class="form-group">
+              <label for="laptopRam">RAM</label>
+              <input type="text" class="form-control" id="laptopRam">
+            </div>
+            <div class="form-group">
+              <label for="laptopStorage">Storage</label>
+              <input type="text" class="form-control" id="laptopStorage">
+            </div>
+            <div class="form-group">
+              <label for="laptopGraphics">Graphics</label>
+              <input type="text" class="form-control" id="laptopGraphics">
+            </div>
+            <div class="form-group">
+              <label for="laptopDisplay">Display</label>
+              <input type="text" class="form-control" id="laptopDisplay">
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" id="laptopAvailable">
+              <label class="form-check-label" for="laptopAvailable">Available</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Modal for Placing a New Order -->
+  <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="orderModalLabel">Place New Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="orderForm">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="orderLaptopSelect">Select Laptop</label>
+              <select class="form-control" id="orderLaptopSelect" required></select>
+            </div>
+            <div class="form-group">
+              <label for="orderQuantity">Quantity</label>
+              <input type="number" class="form-control" id="orderQuantity" value="1" min="1" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Place Order</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    let token = '';
+    let currentUser = {};
+
+    // Navigation handling
+    $('#navTabs a').click(function(e) {
+      e.preventDefault();
+      const section = $(this).data('section');
+      showSection(section);
+    });
+
+    function showSection(section) {
+      $('#homeSection, #laptopsSection, #ordersSection, #profileSection, #manageLaptopsSection').hide();
+      if(section === 'home') {
+        $('#homeSection').show();
+      } else if(section === 'laptops') {
+        $('#laptopsSection').show();
+        loadLaptops();
+      } else if(section === 'orders') {
+        $('#ordersSection').show();
+        loadOrders();
+      } else if(section === 'profile') {
+        $('#profileSection').show();
+        loadProfile();
+      } else if(section === 'manageLaptops') {
+        $('#manageLaptopsSection').show();
+        loadAdminLaptops();
+      }
+    }
+
+    // --- Authentication ---
+    // Login
+    $('#loginForm').submit(function(e) {
+      e.preventDefault();
+      const email = $('#loginEmail').val();
+      const password = $('#loginPassword').val();
+      $.ajax({
+        url: '/api/auth/login',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email, password }),
+        success: function(data) {
+          token = data.token;
+          $('#authModal').modal('hide');
+          afterLogin();
+        },
+        error: function(err) {
+          alert('Login failed: ' + err.responseJSON.message);
+        }
+      });
+    });
+
+    // Registration
+    $('#registerForm').submit(function(e) {
+      e.preventDefault();
+      const username = $('#registerUsername').val();
+      const email = $('#registerEmail').val();
+      const password = $('#registerPassword').val();
+      $.ajax({
+        url: '/api/auth/register',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ username, email, password }),
+        success: function(data) {
+          alert('Registration successful! Please log in.');
+          $('#registerForm')[0].reset();
+          $('#authTab a[href="#loginPane"]').tab('show');
+        },
+        error: function(err) {
+          alert('Registration failed: ' + err.responseJSON.error);
+        }
+      });
+    });
+
+    function afterLogin() {
+      $('#logoutBtn').show();
+      $('#homeSection').hide();
+      loadProfile();
+      showSection('laptops');
+    }
+
+    $('#logoutBtn').click(function() {
+      token = '';
+      currentUser = {};
+      $('#logoutBtn').hide();
+      showSection('home');
+    });
+
+    // --- Laptops (Public) ---
+    function loadLaptops() {
+      $.ajax({
+        url: '/api/laptops',
+        method: 'GET',
+        success: function(data) {
+          let html = '<div class="row">';
+          data.forEach(laptop => {
+            html += `<div class="col-md-4 mb-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">${laptop.brand} ${laptop.model}</h5>
+                          <p class="card-text">$${laptop.price}</p>
+                          <p class="card-text">
+                            <small>Specs: ${laptop.specifications.processor}, ${laptop.specifications.ram}, ${laptop.specifications.storage}</small>
+                          </p>
+                        </div>
+                      </div>
+                    </div>`;
+          });
+          html += '</div>';
+          $('#laptopList').html(html);
+        },
+        error: function(err) {
+          alert('Error loading laptops.');
+        }
+      });
+    }
+
+    // --- Manage Laptops (Admin) ---
+    function loadAdminLaptops() {
+      $.ajax({
+        url: '/api/laptops',
+        method: 'GET',
+        success: function(data) {
+          let html = '<table class="table"><thead><tr><th>Brand</th><th>Model</th><th>Price</th><th>Actions</th></tr></thead><tbody>';
+          data.forEach(laptop => {
+            html += `<tr>
+                        <td>${laptop.brand}</td>
+                        <td>${laptop.model}</td>
+                        <td>$${laptop.price}</td>
+                        <td>
+                          <button class="btn btn-sm btn-info" onclick="editLaptop('${laptop._id}')">Edit</button>
+                          <button class="btn btn-sm btn-danger" onclick="deleteLaptop('${laptop._id}')">Delete</button>
+                        </td>
+                      </tr>`;
+          });
+          html += '</tbody></table>';
+          $('#adminLaptopList').html(html);
+        },
+        error: function(err) {
+          alert('Error loading laptops for admin.');
+        }
+      });
+    }
+
+    // Open modal to add a new laptop (Admin)
+    $('#addLaptopBtn').click(function() {
+      $('#laptopForm')[0].reset();
+      $('#laptopId').val('');
+      $('#laptopModalLabel').text('Add New Laptop');
+      $('#laptopModal').modal('show');
+    });
+
+    // Save (add/update) laptop
+    $('#laptopForm').submit(function(e) {
+      e.preventDefault();
+      const laptopData = {
+        brand: $('#laptopBrand').val(),
+        model: $('#laptopModel').val(),
+        price: parseFloat($('#laptopPrice').val()),
+        specifications: {
+          processor: $('#laptopProcessor').val(),
+          ram: $('#laptopRam').val(),
+          storage: $('#laptopStorage').val(),
+          graphics: $('#laptopGraphics').val(),
+          display: $('#laptopDisplay').val()
+        },
+        available: $('#laptopAvailable').is(':checked')
+      };
+      const laptopId = $('#laptopId').val();
+      let ajaxOptions = {
+        url: '/api/laptops',
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        contentType: 'application/json',
+        data: JSON.stringify(laptopData)
+      };
+      if(laptopId) {
+        ajaxOptions.url = '/api/laptops/' + laptopId;
+        ajaxOptions.method = 'PUT';
+      }
+      $.ajax(ajaxOptions).done(function(data) {
+        $('#laptopModal').modal('hide');
+        loadAdminLaptops();
+      }).fail(function(err) {
+        alert('Error saving laptop: ' + err.responseJSON.error);
+      });
+    });
+
+    // Edit laptop (Admin)
+    function editLaptop(id) {
+      $.ajax({
+        url: '/api/laptops/' + id,
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token },
+        success: function(laptop) {
+          $('#laptopId').val(laptop._id);
+          $('#laptopBrand').val(laptop.brand);
+          $('#laptopModel').val(laptop.model);
+          $('#laptopPrice').val(laptop.price);
+          $('#laptopProcessor').val(laptop.specifications.processor);
+          $('#laptopRam').val(laptop.specifications.ram);
+          $('#laptopStorage').val(laptop.specifications.storage);
+          $('#laptopGraphics').val(laptop.specifications.graphics);
+          $('#laptopDisplay').val(laptop.specifications.display);
+          $('#laptopAvailable').prop('checked', laptop.available);
+          $('#laptopModalLabel').text('Edit Laptop');
+          $('#laptopModal').modal('show');
+        },
+        error: function(err) {
+          alert('Error fetching laptop details.');
+        }
+      });
+    }
+
+    // Delete laptop (Admin)
+    function deleteLaptop(id) {
+      if(confirm('Are you sure you want to delete this laptop?')) {
+        $.ajax({
+          url: '/api/laptops/' + id,
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token },
+          success: function(data) {
+            loadAdminLaptops();
+          },
+          error: function(err) {
+            alert('Error deleting laptop.');
+          }
+        });
+      }
+    }
+
+    // --- Orders ---
+    function loadOrders() {
+      $.ajax({
+        url: '/api/orders',
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token },
+        success: function(data) {
+          let html = '<table class="table"><thead><tr><th>Order Date</th><th>Total Price</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+          data.forEach(order => {
+            html += `<tr>
+                        <td>${new Date(order.orderDate).toLocaleString()}</td>
+                        <td>$${order.totalPrice}</td>
+                        <td>${order.status}</td>
+                        <td>
+                          ${order.status === 'pending' ? `<button class="btn btn-sm btn-info" onclick="editOrder('${order._id}')">Edit</button>
+                          <button class="btn btn-sm btn-danger" onclick="deleteOrder('${order._id}')">Delete</button>` : 'N/A'}
+                        </td>
+                      </tr>`;
+          });
+          html += '</tbody></table>';
+          $('#orderList').html(html);
+        },
+        error: function(err) {
+          alert('Error loading orders.');
+        }
+      });
+    }
+
+    // Open modal to place new order
+    $('#newOrderBtn').click(function() {
+      $.ajax({
+        url: '/api/laptops',
+        method: 'GET',
+        success: function(data) {
+          let options = '';
+          data.forEach(laptop => {
+            if(laptop.available) {
+              options += `<option value="${laptop._id}">${laptop.brand} ${laptop.model} - $${laptop.price}</option>`;
+            }
+          });
+          $('#orderLaptopSelect').html(options);
+          $('#orderForm')[0].reset();
+          $('#orderModal').modal('show');
+        },
+        error: function(err) {
+          alert('Error loading laptops for order.');
+        }
+      });
+    });
+
+    // Submit new order
+    $('#orderForm').submit(function(e) {
+      e.preventDefault();
+      const orderData = {
+        laptops: [{
+          laptop: $('#orderLaptopSelect').val(),
+          quantity: parseInt($('#orderQuantity').val())
+        }]
+      };
+      $.ajax({
+        url: '/api/orders',
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        contentType: 'application/json',
+        data: JSON.stringify(orderData),
+        success: function(data) {
+          $('#orderModal').modal('hide');
+          loadOrders();
+        },
+        error: function(err) {
+          alert('Error placing order: ' + err.responseJSON.error);
+        }
+      });
+    });
+
+    // Edit order (for pending orders)
+    function editOrder(id) {
+      const newQuantity = prompt("Enter new quantity:");
+      if(newQuantity && !isNaN(newQuantity)) {
+        $.ajax({
+          url: '/api/orders/' + id,
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token },
+          contentType: 'application/json',
+          data: JSON.stringify({ laptops: [{ quantity: parseInt(newQuantity) }] }),
+          success: function(data) {
+            loadOrders();
+          },
+          error: function(err) {
+            alert('Error updating order: ' + err.responseJSON.error);
+          }
+        });
+      }
+    }
+
+    // Delete order (for pending orders)
+    function deleteOrder(id) {
+      if(confirm('Are you sure you want to cancel this order?')) {
+        $.ajax({
+          url: '/api/orders/' + id,
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token },
+          success: function(data) {
+            loadOrders();
+          },
+          error: function(err) {
+            alert('Error cancelling order: ' + err.responseJSON.error);
+          }
+        });
+      }
+    }
+
+    // --- Profile ---
+    function loadProfile() {
+      $.ajax({
+        url: '/api/users/profile',
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + token },
+        success: function(user) {
+          currentUser = user;
+          let html = `<p><strong>Username:</strong> ${user.username}</p>
+                      <p><strong>Email:</strong> ${user.email}</p>`;
+          if(user.addresses && user.addresses.length > 0) {
+            html += '<p><strong>Addresses:</strong></p><ul>';
+            user.addresses.forEach(addr => {
+              html += `<li>${addr.street}, ${addr.city}, ${addr.state}, ${addr.zip}</li>`;
+            });
+            html += '</ul>';
+          }
+          $('#profileInfo').html(html);
+          // Show/hide admin tab based on user role
+          if(user.role === 'admin') {
+            $('#adminTab').show();
+          } else {
+            $('#adminTab').hide();
+          }
+        },
+        error: function(err) {
+          alert('Error loading profile.');
+        }
+      });
+    }
+
+    // Toggle profile edit form
+    $('#editProfileBtn').click(function() {
+      $('#profileUsername').val(currentUser.username);
+      $('#profileEmail').val(currentUser.email);
+      $('#editProfileForm').toggle();
+    });
+
+    $('#cancelProfileEdit').click(function() {
+      $('#editProfileForm').hide();
+    });
+
+    // Update profile
+    $('#profileUpdateForm').submit(function(e) {
+      e.preventDefault();
+      const updatedData = {
+        username: $('#profileUsername').val(),
+        email: $('#profileEmail').val()
+      };
+      $.ajax({
+        url: '/api/users/profile',
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + token },
+        contentType: 'application/json',
+        data: JSON.stringify(updatedData),
+        success: function(user) {
+          currentUser = user;
+          loadProfile();
+          $('#editProfileForm').hide();
+          alert('Profile updated successfully');
+        },
+        error: function(err) {
+          alert('Error updating profile: ' + err.responseJSON.error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
