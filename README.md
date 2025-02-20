@@ -25,24 +25,25 @@ A full-stack web application that simulates an online laptop store. This project
 
 ## Project Structure
 ```
+LICENSE
+README.md
 project/
-│   app.js
-│   package.json
-│   README.md
+├───app.js
+├───package.json
 │
-├───models
-│       Laptop.js
-│       Order.js
-│       User.js
+├───models/
+│      ├─Laptop.js
+│      ├─Order.js
+│      └─User.js
 │
-├───routes
-│       auth.js
-│       laptops.js
-│       orders.js
-│       users.js
+├───routes/
+│      ├─auth.js
+│      ├─laptops.js
+│      ├─orders.js
+│      └─users.js
 │
-└───middleware
-        auth.js
+└───middleware/
+       └─auth.js
 ```
 
 ## Prerequisites
