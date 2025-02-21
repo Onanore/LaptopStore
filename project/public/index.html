@@ -335,7 +335,7 @@
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">${laptop.brand} ${laptop.model}</h5>
-                          <p class="card-text">$${laptop.price}</p>
+                          <p class="card-text">${laptop.price} KZT</p>
                           <p class="card-text">
                             <small>Specs: ${laptop.specifications.processor}, ${laptop.specifications.ram}, ${laptop.specifications.storage}</small>
                           </p>
@@ -363,7 +363,7 @@
             html += `<tr>
                         <td>${laptop.brand}</td>
                         <td>${laptop.model}</td>
-                        <td>$${laptop.price}</td>
+                        <td>${laptop.price} KZT</td>
                         <td>
                           <button class="btn btn-sm btn-info" onclick="editLaptop('${laptop._id}')">Edit</button>
                           <button class="btn btn-sm btn-danger" onclick="deleteLaptop('${laptop._id}')">Delete</button>
@@ -477,7 +477,7 @@
           data.forEach(order => {
             html += `<tr>
                         <td>${new Date(order.orderDate).toLocaleString()}</td>
-                        <td>$${order.totalPrice}</td>
+                        <td>${order.totalPrice} KZT</td>
                         <td>${order.status}</td>
                         <td>
                           ${order.status === 'pending' ? `<button class="btn btn-sm btn-info" onclick="editOrder('${order._id}')">Edit</button>
@@ -503,7 +503,7 @@
           let options = '';
           data.forEach(laptop => {
             if(laptop.available) {
-              options += `<option value="${laptop._id}">${laptop.brand} ${laptop.model} - $${laptop.price}</option>`;
+              options += `<option value="${laptop._id}">${laptop.brand} ${laptop.model} - KZT${laptop.price}</option>`;
             }
           });
           $('#orderLaptopSelect').html(options);
